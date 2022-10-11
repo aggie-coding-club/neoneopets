@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\.github",
+    "\\.github\\workflows",
+    "\\NeoNeoPets"
   ],
-  "SelectedNode": "\\C:\\Users\\vantd\\Source\\Repos\\neoneopets",
+  "SelectedNode": "\\NeoNeoPets\\NeoNeoPets.csproj",
   "PreviewInSolutionExplorer": false
 }
