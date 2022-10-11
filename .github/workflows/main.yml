@@ -19,7 +19,7 @@ jobs:
           dotnet-version: 3.1.422
 
       # Publish the site
-      - name: Publish
+      - name: Publish site
         run: dotnet publish NeoNeoPets/NeoNeoPets.csproj -c Release -o public -p:GHPages=true
 
       # Deploy the site
