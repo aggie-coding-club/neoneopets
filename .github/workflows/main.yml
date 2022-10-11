@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - demo
 
 jobs:
   deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1.7.2
         with:
-          dotnet-version: 3.1
+          dotnet-version: 3.1.424
 
       # Publish the site
       - name: Publish
