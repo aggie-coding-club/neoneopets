@@ -28,6 +28,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: demo
-          FOLDER: NeoNeoPets/wwwroot
+          BRANCH: gh-pages
+          FOLDER: release/wwwroot
           force_orphan: true
