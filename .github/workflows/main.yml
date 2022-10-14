@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - demo
+      - gh-pages
 
 jobs:
   deploy:
