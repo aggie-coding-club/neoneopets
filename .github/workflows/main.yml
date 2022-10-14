@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - demo
-      - gh-pages
 
 jobs:
   deploy:
@@ -28,6 +27,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: release/wwwroot
+          publish_branch: gh-pages
+          publish_dir: release/wwwroot
           force_orphan: true
