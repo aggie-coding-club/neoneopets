@@ -1,0 +1,26 @@
+@if (src == null) {
+    <div
+    class='unity-frame'
+    id='@id'
+    style='height: 700px; width: 1000px;'>
+    I am a unity frame, but I have no source.
+    </div>
+}
+else {
+    <iframe 
+    class='unity-frame' 
+    id='@id' 
+    src='@src' 
+    style='height: 700px; width: 1000px;'>
+    </iframe>
+}
+
+@code {
+    [Parameter]
+    // only nullable to allow for a placeholder frame
+    // should not normally be null
+    public string? src { get; set; }
+    // if the id property is empty it will not appear
+    // in the final html
+    public string id { get; set;}
+}
