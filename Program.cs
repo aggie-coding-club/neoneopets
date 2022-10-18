@@ -21,6 +21,30 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// to allows gz files for unity frames
+// I considered using uncompressed unity builds, but this had other transmission problems.
+// see https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/static-files?view=aspnetcore-6.0
+// and https://github.com/dotnet/aspnetcore/issues/2458
+// and https://stackoverflow.com/questions/29156701
+app.MapWhen(
+    ctx => ctx.Request.Path.ToString().Contains("/unity/"),
+    subApp => subApp.UseStaticFiles(new StaticFileOptions {
+        OnPrepareResponse = ctx => {
+            IHeaderDictionary headers = ctx.Context.Response.Headers;
+            string contentType = headers["Content-Type"];
+            if(contentType == "application/x-gzip") {
+                if(ctx.File.Name.EndsWith("js.gz")) {
+                    contentType = "application/javascript";
+                }
+                else if(ctx.File.Name.EndsWith("wasm.gz")) {
+                    contentType = "application/wasm";
+                }
+                headers.Add("Content-Encoding", "gzip");
+                headers["Content-Type"] = contentType;
+            }
+        }
+    })
+);
 app.UseStaticFiles();
 
 app.UseRouting();
