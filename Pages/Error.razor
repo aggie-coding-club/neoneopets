@@ -1,0 +1,71 @@
+﻿@page "/errorform"
+@using System.Text.RegularExpressions;
+@using MongoDB.Driver;
+@using MongoDB.Bson;
+
+<PageTitle>Report an Error</PageTitle>
+
+<h3>Howdy! We're sad that you're having an issue. Would you mind telling us what it is?</h3>
+<div class="input-group">
+    <span class="input-group-text">issue</span>
+    <textarea class="form-control" placeholder="Issue:" @bind="FormHandler.report"></textarea>
+</div>
+<div class="input-group mb-3">
+    <span class="input-group-text">?</span>
+    <input type="text" class="form-control" placeholder="Username" aria-label="Username:" @bind="FormHandler.username">
+    <input type="text" class="form-control" placeholder="Email" aria-label="Email:" @bind="FormHandler.email">
+</div>
+<div class="col-12">
+    <button class="btn btn-primary" type="submit" @onclick="FormHandler.submitForm">Submit Error</button>
+</div>
+
+@code {
+    public static class FormHandler {
+        public static Regex username_validity = new Regex("^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$");
+        public static Regex email_validity = new Regex("([a-zA-Z0-9_.+-]+)@[a-zA-Z0-9_.+-]+\\.[a-zA-Z0-9_.+-]");
+        // public static Regex report_validity = new Regex("^[a-zA-Z0-9_.+- ]$");
+        public static string? username {get; set;}
+        public static string? email {get; set;}
+        public static string? report {get; set;}
+        public static bool username_valid;
+        public static bool email_valid;
+        public static bool report_valid;
+
+        public static async void submitForm() {
+
+            username_valid = username_validity.IsMatch(username) ? true : false;
+            email_valid = email_validity.IsMatch(email) ? true : false;
+            report_valid = true; //report_valid = report_validity.IsMatch(report) ? true : false;
+
+            Console.WriteLine("Username: " + username);
+            Console.WriteLine("Email: " + email);
+            Console.WriteLine("Report: " + report);
+
+            if (username_valid && email_valid && report_valid) {
+                Console.WriteLine("Successful output");
+                // in future where we send the info to the database
+                var settings = MongoClientSettings.FromConnectionString("mongodb+srv://neoneopets:Pin.kMil.k27.@neoneopets.3l1txwu.mongodb.net/?retryWrites=true&w=majority");
+                var client = new MongoClient(settings);
+                var database = client.GetDatabase("Site-Data");
+
+                var toSend = new BsonDocument();
+                toSend.Add("Username", username);
+                toSend.Add("Email", email);
+                toSend.Add("Report", report);
+
+                var takeFrom = database.GetCollection<BsonDocument>("Errors");
+
+                await takeFrom.InsertOneAsync(toSend);
+
+            } else {
+                Console.WriteLine("Input failed");
+                // where we alert the user that their input was invalid
+            }
+            username = "";
+            email = "";
+            report = "";
+
+
+        }
+    }
+}
