@@ -44,7 +44,7 @@
             if (username_valid && email_valid && report_valid) {
                 Console.WriteLine("Successful output");
                 // in future where we send the info to the database
-                var settings = MongoClientSettings.FromConnectionString("mongodb+srv://neoneopets:Pin.kMil.k27.@neoneopets.3l1txwu.mongodb.net/?retryWrites=true&w=majority");
+                var settings = MongoClientSettings.FromConnectionString("mongodb+srv://neoneopets:${{secrets.MONGO_PASSWORD}}@neoneopets.3l1txwu.mongodb.net/?retryWrites=true&w=majority");
                 var client = new MongoClient(settings);
                 var database = client.GetDatabase("Site-Data");
 
