@@ -14,6 +14,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.401
+
+    - name: Add mongo secret
+      run: |
+        sed "s/$MONGO_SECRET/${{secrets.MongoPassword}}/" Mongo.cs > Mongo_NEW.cs
+        rm Mongo.cs
+        mv Mongo_NEW.cs Mongo.cs
     
     - name: Build with dotnet
       run: dotnet build --configuration Release
