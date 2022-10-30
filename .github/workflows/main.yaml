@@ -17,7 +17,7 @@ jobs:
 
     - name: Add mongo secret
       run: |
-        sed "s/$MONGO_SECRET/${{secrets.MongoPassword}}/" Mongo.cs > Mongo_NEW.cs
+        sed "s/\$MONGO_SECRET/${{secrets.MongoPassword}}/" Mongo.cs > Mongo_NEW.cs
         rm Mongo.cs
         mv Mongo_NEW.cs Mongo.cs
     
