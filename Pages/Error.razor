@@ -47,7 +47,7 @@
             if (username_valid && email_valid && report_valid) {
                 Console.WriteLine("Successful output");
                 // in future where we send the info to the database
-                /*var settings = MongoClientSettings.FromConnectionString("mongodb+srv://neoneopets:"+MongoConnector.pswd+"@neoneopets.3l1txwu.mongodb.net/?retryWrites=true&w=majority");
+                var settings = MongoClientSettings.FromConnectionString("mongodb+srv://neoneopets:"+MongoConnector.pswd+"@neoneopets.3l1txwu.mongodb.net/?retryWrites=true&w=majority");
                 var client = new MongoClient(settings);
                 var database = client.GetDatabase("Site-Data");
 
@@ -59,7 +59,7 @@
                 var takeFrom = database.GetCollection<BsonDocument>("Errors");
 
                 await takeFrom.InsertOneAsync(toSend);
-                */
+                
 
             } else {
                 Console.WriteLine("Input failed");
