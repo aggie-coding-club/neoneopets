@@ -22,6 +22,25 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapWhen(
+    ctx => ctx.Request.Path.ToString().Contains("/unity/"),
+    subApp => subApp.UseStaticFiles(new StaticFileOptions {
+        OnPrepareResponse = ctx => {
+            IHeaderDictionary headers = ctx.Context.Response.Headers;
+            string contentType = headers["Content-Type"];
+            if(contentType == "application/x-gzip") {
+                if(ctx.File.Name.EndsWith("js.gz")) {
+                    contentType = "application/javascript";
+                }
+                else if(ctx.File.Name.EndsWith("wasm.gz")) {
+                    contentType = "application/wasm";
+                }
+                headers.Add("Content-Encoding", "gzip");
+                headers["Content-Type"] = contentType;
+            }
+        }
+    })
+);
 app.UseStaticFiles();
 
 app.UseRouting();
