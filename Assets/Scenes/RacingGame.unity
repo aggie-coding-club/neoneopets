@@ -476,7 +476,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   accelerationFactor: 100
-  driftFactor: 0.1
+  driftFactor: 0.85
   turnFactor: 3
   dragFactor: 0.15
   dragAdjustment: 5
@@ -951,7 +951,8 @@ EdgeCollider2D:
   - {x: 8.2154875, y: 7.924661}
   - {x: 6.390933, y: 7.837778}
   - {x: 4.769081, y: 6.9373474}
-  - {x: 0.057923928, y: 3.0543935}
+  - {x: 0.024755962, y: 3.0687542}
+  - {x: -0.018427435, y: 3.0501523}
   m_AdjacentStartPoint: {x: 0, y: 0}
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0

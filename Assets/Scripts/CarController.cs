@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CarController : MonoBehaviour
 {
     [Header("Car Settings")]
     [Tooltip("0 means no movement")]
-    public float accelerationFactor = 20.0f;
+    public float accelerationFactor = 100.0f;
 
     [Tooltip("Range: [0, 1]. 0 = no drift. 1 = no traction")]
     public float driftFactor = 0.1f;
@@ -18,10 +19,10 @@ public class CarController : MonoBehaviour
     public float dragFactor = 0.15f;
 
     [Tooltip("Base rolling resistance. 0 = slip and slide")]
-    public float dragAdjustment = 2.0f;
+    public float dragAdjustment = 5.0f;
 
     [Tooltip("Maximum Speed. 0 = no movement. May not apply as speed is also bound by drag")]
-    public float maxSpeed = 20.0f;
+    public float maxSpeed = 5.0f;
 
     // Input
     float accelerationInput = 0;
@@ -65,7 +66,7 @@ public class CarController : MonoBehaviour
     void ApplyEngineForce()
     {
         // Calculate amount of velocity that is forward
-        velocityUp = Vector2.Dot(transform.up, carRigid.velocity);
+        velocityUp = Math.Abs(Vector2.Dot(transform.up, carRigid.velocity));
 
         // Produce drag to slow car
         // Actual car drag involves a constant tire drag
