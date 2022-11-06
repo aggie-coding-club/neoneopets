@@ -16,11 +16,13 @@ else {
 }
 
 @code {
-    [Parameter]
     // only nullable to allow for a placeholder frame
     // should not normally be null
+    [Parameter]
     public string? src { get; set; }
+
     // if the id property is empty it will not appear
     // in the final html
+    [Parameter]
     public string id { get; set;}
 }
