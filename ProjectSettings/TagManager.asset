@@ -6,11 +6,16 @@ TagManager:
   tags:
   - Username
   - UsernameField
+  - Password
+  - UserCar
+  - AICar
+  - RaceController
+  - AICarWaypoint
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - EditorOnly
   - Water
   - UI
   - 

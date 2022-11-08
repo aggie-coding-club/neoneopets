@@ -1,28 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 
 public class CarController : MonoBehaviour
 {
-    [Header("Car Settings")]
-    [Tooltip("0 means no movement")]
-    public float accelerationFactor = 100.0f;
-
-    [Tooltip("Range: [0, 1]. 0 = no drift. 1 = no traction")]
-    public float driftFactor = 0.1f;
-
-    [Tooltip("How fast to turn. 0 = no turning")]
-    public float turnFactor = 3.0f;
-
-    [Tooltip("Coefficient in the drag calculation. 0 = no drag")]
-    public float dragFactor = 0.15f;
-
-    [Tooltip("Base rolling resistance. 0 = slip and slide")]
-    public float dragAdjustment = 5.0f;
-
-    [Tooltip("Maximum Speed. 0 = no movement. May not apply as speed is also bound by drag")]
-    public float maxSpeed = 5.0f;
+    public GameSettings gameSettings;
 
     // Input
     float accelerationInput = 0;
@@ -34,6 +15,7 @@ public class CarController : MonoBehaviour
 
     // Components
     private Rigidbody2D carRigid;
+    public Action oncol = () => {}; 
 
     // Awake is called when the script instance is being loaded
     void Awake()
@@ -61,6 +43,13 @@ public class CarController : MonoBehaviour
         KillOrthogonalVelocity();
         ApplySteering();
     }
+    
+    void OnCollisionEnter2D(Collision2D col) {
+        if (col.gameObject.tag == "AICar")
+        {
+            oncol();
+        }
+    }
 
     // Calculates and applies the relative force that the engine should exert on the car
     void ApplyEngineForce()
@@ -71,14 +60,14 @@ public class CarController : MonoBehaviour
         // Produce drag to slow car
         // Actual car drag involves a constant tire drag
         // plus a drag curve relative to the square of velocity
-        carRigid.drag = velocityUp * velocityUp * dragFactor * Time.fixedDeltaTime + dragAdjustment;
+        carRigid.drag = velocityUp * velocityUp * gameSettings.dragFactor * Time.fixedDeltaTime + gameSettings.dragAdjustment;
 
         // Don't generate force if at max speed already
-        if (velocityUp > maxSpeed)
+        if (velocityUp > gameSettings.maxSpeed)
             return;
 
         // Generate the engine force
-        Vector2 engineVector = transform.up * accelerationInput * accelerationFactor;
+        Vector2 engineVector = transform.up * accelerationInput * gameSettings.accelerationFactor;
 
         // Apply the force to the car
         carRigid.AddForce(engineVector, ForceMode2D.Force);
@@ -87,7 +76,7 @@ public class CarController : MonoBehaviour
     // Calculates and the applies the steering force onto the car
     void ApplySteering()
     {
-        rotationAngle -= steeringInput * turnFactor;
+        rotationAngle -= steeringInput * gameSettings.turnFactor;
 
         carRigid.MoveRotation(rotationAngle);
     }
@@ -97,7 +86,7 @@ public class CarController : MonoBehaviour
         Vector2 forwardVelocity = transform.up * Vector2.Dot(carRigid.velocity, transform.up);
         Vector2 rightVelocity = transform.right * Vector2.Dot(carRigid.velocity, transform.right);
 
-        carRigid.velocity = forwardVelocity + rightVelocity * driftFactor;
+        carRigid.velocity = forwardVelocity + rightVelocity * gameSettings.driftFactor;
     }
 
     public void SetInputVector(Vector2 inputVector)
