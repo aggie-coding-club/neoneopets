@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -3681100382146942362}
   - component: {fileID: 5352150970834293399}
   - component: {fileID: -636297419931232517}
+  - component: {fileID: -753323482719865433}
   m_Layer: 0
   m_Name: AI Car Prefab
   m_TagString: AICar
@@ -84,6 +85,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2f09d015b2f5df448a7889e1c098f62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gs: {fileID: 0}
+  wps: []
+  nextWP: 0
 --- !u!212 &-636297419931232517
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -136,3 +140,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-753323482719865433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487552849408268762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08c41089528957546a5f0eac4767683e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameSettings: {fileID: 0}

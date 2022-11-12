@@ -1777,14 +1777,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSettings: {fileID: 11400000, guid: 632899496f39430489cbba95b8d1cae4, type: 2}
-  introUI: {fileID: 1497691563}
-  raceUI: {fileID: 15573972}
-  timerObject: {fileID: 1742634428}
-  livesObject: {fileID: 255640660}
-  lapsObject: {fileID: 0}
-  userCarPrefab: {fileID: 3986885146958321932, guid: 1be24f706d855eb4aa38c3522017548e, type: 3}
-  aiCarPrefab: {fileID: 1487552849408268762, guid: bdac6dccf9089094288330568e493187, type: 3}
-  crashCooldown: 2
   waypoints:
   - {fileID: 165003942}
   - {fileID: 1262840798}
@@ -1794,6 +1786,13 @@ MonoBehaviour:
   - {fileID: 648362861}
   - {fileID: 1855232824}
   - {fileID: 1814184180}
+  introUI: {fileID: 1497691563}
+  raceUI: {fileID: 15573972}
+  timerObject: {fileID: 1742634428}
+  livesObject: {fileID: 255640660}
+  lapsObject: {fileID: 0}
+  userCarPrefab: {fileID: 3986885146958321932, guid: 1be24f706d855eb4aa38c3522017548e, type: 3}
+  aiCarPrefab: {fileID: 1487552849408268762, guid: bdac6dccf9089094288330568e493187, type: 3}
 --- !u!4 &1736426906
 Transform:
   m_ObjectHideFlags: 0

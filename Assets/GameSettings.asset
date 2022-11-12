@@ -22,18 +22,9 @@ MonoBehaviour:
   - {x: -7.32, y: -0.95, z: 0}
   - {x: -6.78, y: -1.24, z: 0}
   accelerationFactor: 100
-  driftFactor: 0.85
+  driftFactor: 0
   turnFactor: 3
   dragFactor: 0.15
   dragAdjustment: 5
   maxSpeed: 5
   crashCooldown: 2
-  waypoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}

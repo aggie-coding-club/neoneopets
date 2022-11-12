@@ -12,6 +12,8 @@ public class CarController : MonoBehaviour
     // State
     float rotationAngle = 0;
     float velocityUp = 0;
+    
+    public float speedAdjustment = 1f;
 
     // Components
     private Rigidbody2D carRigid;
@@ -63,7 +65,7 @@ public class CarController : MonoBehaviour
         carRigid.drag = velocityUp * velocityUp * gameSettings.dragFactor * Time.fixedDeltaTime + gameSettings.dragAdjustment;
 
         // Don't generate force if at max speed already
-        if (velocityUp > gameSettings.maxSpeed)
+        if (velocityUp > gameSettings.maxSpeed * speedAdjustment)
             return;
 
         // Generate the engine force

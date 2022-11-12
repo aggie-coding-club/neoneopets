@@ -39,5 +39,4 @@ public class GameSettings : ScriptableObject
     [Header("Game Settings")]
     [Tooltip("Time in seconds between loss of a life.")]
     public float crashCooldown = 2;
-    public GameObject[] waypoints;
 }

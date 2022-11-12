@@ -4,8 +4,20 @@ using UnityEngine;
 
 public class RaceController : MonoBehaviour
 {
+    private float[] speedAdjustments = {
+        0.95f,
+        0.90f,
+        0.85f,
+        0.80f,
+        0.75f,
+        0.70f,
+        0.65f,
+        0.60f
+    };
+
     // Controller Info
     public GameSettings gameSettings;
+    public GameObject[] waypoints;
 
     [Header("UI Elements")]
     [SerializeField] GameObject introUI;
@@ -40,7 +52,6 @@ public class RaceController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        print(gameSettings);
     }
 
     // Update is called once per frame
@@ -88,7 +99,12 @@ public class RaceController : MonoBehaviour
         userCar = (GameObject) Instantiate(userCarPrefab, gameSettings.carPositions[0], Quaternion.identity);
         for (int i = 1; i < gameSettings.carPositions.Length; i++)
         {
-            Instantiate(aiCarPrefab, gameSettings.carPositions[i], Quaternion.identity);
+            GameObject car = (GameObject) Instantiate(aiCarPrefab, gameSettings.carPositions[i], Quaternion.identity);
+            car.GetComponent<AICarController>().gs = gameSettings;
+            car.GetComponent<CarController>().gameSettings = gameSettings;
+            car.GetComponent<AICarController>().wps = waypoints;
+            car.GetComponent<AICarController>().nextWP = 1;
+            car.GetComponent<CarController>().speedAdjustment = speedAdjustments[i-1];
         }
         // Add collision bridge for User Car
         userCar.GetComponent<CarController>().oncol = OnCollisionEnter2D;

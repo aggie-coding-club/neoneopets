@@ -69,12 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08c41089528957546a5f0eac4767683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  accelerationFactor: 100
-  driftFactor: 0.85
-  turnFactor: 3
-  dragFactor: 0.15
-  dragAdjustment: 5
-  maxSpeed: 5
+  gameSettings: {fileID: 0}
 --- !u!114 &8282157442983027648
 MonoBehaviour:
   m_ObjectHideFlags: 0
