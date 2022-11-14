@@ -22,6 +22,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Handle gzip compressed unity assets
 app.MapWhen(
     ctx => ctx.Request.Path.ToString().Contains("/unity/"),
     subApp => subApp.UseStaticFiles(new StaticFileOptions {
@@ -40,6 +41,11 @@ app.MapWhen(
             }
         }
     })
+);
+// Route api requests to APIHandler
+app.MapWhen(
+    ctx => ctx.Request.Path.ToString().Contains("/api/"),
+    subApp => subApp.Run(APIHandler.HandleRequest)
 );
 app.UseStaticFiles();
 
