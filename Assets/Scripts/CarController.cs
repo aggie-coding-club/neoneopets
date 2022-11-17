@@ -3,7 +3,7 @@ using System;
 
 public class CarController : MonoBehaviour
 {
-    public GameSettings gameSettings;
+    public RaceController.GameSettings gameSettings;
 
     // Input
     float accelerationInput = 0;
@@ -46,7 +46,7 @@ public class CarController : MonoBehaviour
         ApplySteering();
     }
     
-    void OnCollisionEnter2D(Collision2D col) {
+    void OnTriggerEnter2D(Collider2D col) {
         if (col.gameObject.tag == "AICar")
         {
             oncol();

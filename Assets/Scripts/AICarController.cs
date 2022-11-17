@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AICarController : MonoBehaviour
 {
-    public GameSettings gs;
+    public RaceController.GameSettings gs;
     public GameObject[] wps;
     public int nextWP = 0;
 

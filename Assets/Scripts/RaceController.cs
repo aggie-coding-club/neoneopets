@@ -4,15 +4,71 @@ using UnityEngine;
 
 public class RaceController : MonoBehaviour
 {
+    [Serializable]
+    public struct GameSettings {
+        [Header("Scene Settings")]
+        public Vector3[] carPositions; /* = {
+            new Vector3(-7.28999996f,0.720000029f,0),
+            new Vector3(-6.78000021f,0.409999996f,0),
+            new Vector3(-6.21999979f,0.150000006f,0),
+            new Vector3(-7.32000017f,-0.119999997f,0),
+            new Vector3(-6.78000021f,-0.430000007f,0),
+            new Vector3(-6.21999979f,-0.74000001f,0),
+            new Vector3(-7.32000017f,-0.949999988f,0),
+            new Vector3(-6.78000021f,-1.24000001f,0),
+        };*/
+        
+        [Header("User Car Settings")]
+        [Tooltip("0 means no movement")]
+        public float accelerationFactor; // = 100.0f;
+
+        [Tooltip("Range: [0, 1]. 0 = no drift. 1 = no traction")]
+        public float driftFactor; // = 0.1f;
+
+        [Tooltip("How fast to turn. 0 = no turning")]
+        public float turnFactor; // = 3.0f;
+
+        [Tooltip("Coefficient in the drag calculation. 0 = no drag")]
+        public float dragFactor; // = 0.15f;
+
+        [Tooltip("Base rolling resistance. 0 = slip and slide")]
+        public float dragAdjustment; // = 5.0f;
+
+        [Tooltip("Maximum Speed. 0 = no movement. May not apply as speed is also bound by drag")]
+        public float maxSpeed; // = 5.0f;
+        
+        [Header("Game Settings")]
+        [Tooltip("Time in seconds between loss of a life.")]
+        public float crashCooldown; // = 2;
+        
+        public GameSettings(
+            Vector3[] carPositions,
+            float accelerationFactor,
+            float driftFactor,
+            float turnFactor,
+            float dragFactor,
+            float dragAdjustment,
+            float maxSpeed,
+            float crashCooldown
+        ) {
+            this.carPositions = carPositions;
+            this.accelerationFactor = accelerationFactor;
+            this.driftFactor = driftFactor;
+            this.turnFactor = turnFactor;
+            this.dragFactor = dragFactor;
+            this.dragAdjustment = dragAdjustment;
+            this.maxSpeed = maxSpeed;
+            this.crashCooldown = crashCooldown;
+        }
+    }
     private float[] speedAdjustments = {
+        0.975f,
         0.95f,
         0.90f,
-        0.85f,
         0.80f,
         0.75f,
         0.70f,
-        0.65f,
-        0.60f
+        0.60f,
     };
 
     // Controller Info
