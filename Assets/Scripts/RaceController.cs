@@ -17,6 +17,8 @@ public class RaceController : MonoBehaviour
             new Vector3(-7.32000017f,-0.949999988f,0),
             new Vector3(-6.78000021f,-1.24000001f,0),
         };*/
+        public GameObject[] trackPoints;
+        public int startTP;
         
         [Header("User Car Settings")]
         [Tooltip("0 means no movement")]
@@ -43,6 +45,8 @@ public class RaceController : MonoBehaviour
         
         public GameSettings(
             Vector3[] carPositions,
+            GameObject[] trackPoints,
+            int startTP,
             float accelerationFactor,
             float driftFactor,
             float turnFactor,
@@ -52,6 +56,8 @@ public class RaceController : MonoBehaviour
             float crashCooldown
         ) {
             this.carPositions = carPositions;
+            this.trackPoints = trackPoints;
+            this.startTP = startTP;
             this.accelerationFactor = accelerationFactor;
             this.driftFactor = driftFactor;
             this.turnFactor = turnFactor;
@@ -59,6 +65,21 @@ public class RaceController : MonoBehaviour
             this.dragAdjustment = dragAdjustment;
             this.maxSpeed = maxSpeed;
             this.crashCooldown = crashCooldown;
+        }
+    }
+    
+    [Serializable]
+    public struct ScoringSystem {
+        [SerializeField] float totalCoefficient; // 100
+        [SerializeField] float timeCoefficient; // 15
+        [SerializeField] float timePower; // 0.75
+        public int Score(int laps, float time) {
+            return (int) (laps * Math.Pow(timeCoefficient * laps / time, timePower) * totalCoefficient);
+        }
+        public ScoringSystem(float totalCoefficient, float timeCoefficient, float timePower) {
+            this.totalCoefficient = totalCoefficient;
+            this.timeCoefficient = timeCoefficient;
+            this.timePower = timePower;
         }
     }
     private float[] speedAdjustments = {
@@ -72,15 +93,18 @@ public class RaceController : MonoBehaviour
     };
 
     // Controller Info
+    public ScoringSystem scoringSystem;
     public GameSettings gameSettings;
     public GameObject[] waypoints;
 
     [Header("UI Elements")]
     [SerializeField] GameObject introUI;
     [SerializeField] GameObject raceUI;
+    [SerializeField] GameObject overUI;
     [SerializeField] GameObject timerObject;
     [SerializeField] GameObject livesObject;
     [SerializeField] GameObject lapsObject;
+    [SerializeField] GameObject scoreValueObject;
     
     [Header("Prefabs")]
     [SerializeField] GameObject userCarPrefab;
@@ -104,6 +128,8 @@ public class RaceController : MonoBehaviour
     // Lives left = 5 - {number of collisions}
     ushort lives = 5;
     float crashTime = float.NegativeInfinity;
+    int laps = 0;
+    int score = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -113,6 +139,7 @@ public class RaceController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        score = scoringSystem.Score(laps, time);
         if (state == GameState.Playing)
         {
             // Keep track of time elapsed while playing
@@ -127,20 +154,33 @@ public class RaceController : MonoBehaviour
             // Display lives
             string ls = string.Format("{0:d}", lives);
             livesObject.GetComponent<TextMeshProUGUI>().text = ls;
+            
+            // Display laps
+            string lp = string.Format("{0:d}", laps);
+            lapsObject.GetComponent<TextMeshProUGUI>().text = lp;
+        }
+        else if (state == GameState.EndGame) {
+            string sc = string.Format("{0:d}", score);
+            scoreValueObject.GetComponent<TextMeshProUGUI>().text = sc;
         }
     }
     
-    void OnCollisionEnter2D()
+    void OnUserCol()
     {
         if (crashTime + gameSettings.crashCooldown > time)
             return;
+        if (lives == 0)
+            EndGame();
         --lives;
         crashTime = time;
     }
     
-    void InitCars()
+    void OnLapProgress(GameObject car, float lapProgress)
     {
-        // Destroy existing cars - User Car and AI Car
+        laps = (int) Math.Floor(lapProgress);
+    }
+    
+    void DestroyCars() {
         foreach (GameObject car in GameObject.FindGameObjectsWithTag("UserCar"))
         {
             Destroy(car);
@@ -149,6 +189,12 @@ public class RaceController : MonoBehaviour
         {
             Destroy(car);
         }
+        userCar = null;
+    }
+    
+    void InitCars()
+    {
+        DestroyCars();
 
         // Instantiate Prefabs for user car and ai car
         // based on the car positions
@@ -163,21 +209,40 @@ public class RaceController : MonoBehaviour
             car.GetComponent<CarController>().speedAdjustment = speedAdjustments[i-1];
         }
         // Add collision bridge for User Car
-        userCar.GetComponent<CarController>().oncol = OnCollisionEnter2D;
+        userCar.GetComponent<CarController>().oncol = OnUserCol;
+        userCar.GetComponent<CarController>().onLapProgress = OnLapProgress;
         userCar.GetComponent<CarController>().gameSettings = gameSettings;
     }
     
     public void BeginGame() {
+        // Verify that game can be started
+        if (state != GameState.PreGame) return;
         // Setup Scene
         InitCars();
         // Initialize Race State
         lives = 5;
         time = 0f;
+        laps = 0;
+        score = 0;
         // Change UI
         introUI.SetActive(false);
         raceUI.SetActive(true);
+        overUI.SetActive(false);
         // Change Game State
         state = GameState.Playing;
+    }
+    
+    public void EndGame() {
+        // Verify possible
+        if (state != GameState.Playing) return;
+        // Set Scene
+        DestroyCars();
+        // Change UI
+        introUI.SetActive(false);
+        raceUI.SetActive(false);
+        overUI.SetActive(true);
+        // Change Game State
+        state = GameState.EndGame;
     }
     
 }

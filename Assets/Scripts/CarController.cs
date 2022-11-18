@@ -3,6 +3,7 @@ using System;
 
 public class CarController : MonoBehaviour
 {
+    public delegate void OnLapProgress(GameObject self, float progress);
     public RaceController.GameSettings gameSettings;
 
     // Input
@@ -12,18 +13,23 @@ public class CarController : MonoBehaviour
     // State
     float rotationAngle = 0;
     float velocityUp = 0;
+    int lastTP;
+    int laps = 0;
     
     public float speedAdjustment = 1f;
 
     // Components
     private Rigidbody2D carRigid;
     public Action oncol = () => {}; 
+    public OnLapProgress onLapProgress = (GameObject self, float progress) => {};
 
     // Awake is called when the script instance is being loaded
     void Awake()
     {
         // Collect Components
         carRigid = GetComponent<Rigidbody2D>();
+        // Set start values
+        lastTP = gameSettings.startTP;
     }
 
     // Start is called before the first frame update
@@ -50,6 +56,17 @@ public class CarController : MonoBehaviour
         if (col.gameObject.tag == "AICar")
         {
             oncol();
+        }
+        else if (col.gameObject.tag == "TrackPoint") {
+            // TODO: check lap progress and report to controller
+            int tpl = gameSettings.trackPoints.Length;
+            if (GameObject.ReferenceEquals(col.gameObject, gameSettings.trackPoints[(lastTP + 1) % tpl])) {
+                lastTP = (++lastTP) % tpl;
+                if (lastTP == 0) {
+                    ++laps;
+                }
+                onLapProgress(this.gameObject, ((float) laps) + ((float) lastTP) / tpl);
+            }
         }
     }
 
