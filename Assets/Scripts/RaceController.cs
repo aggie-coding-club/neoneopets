@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class RaceController : MonoBehaviour
 {
@@ -42,6 +43,7 @@ public class RaceController : MonoBehaviour
         [Header("Game Settings")]
         [Tooltip("Time in seconds between loss of a life.")]
         public float crashCooldown; // = 2;
+        public float liftOffWait; // = 3f;
         
         public GameSettings(
             Vector3[] carPositions,
@@ -53,7 +55,8 @@ public class RaceController : MonoBehaviour
             float dragFactor,
             float dragAdjustment,
             float maxSpeed,
-            float crashCooldown
+            float crashCooldown,
+            float liftOffWait
         ) {
             this.carPositions = carPositions;
             this.trackPoints = trackPoints;
@@ -65,6 +68,7 @@ public class RaceController : MonoBehaviour
             this.dragAdjustment = dragAdjustment;
             this.maxSpeed = maxSpeed;
             this.crashCooldown = crashCooldown;
+            this.liftOffWait = liftOffWait;
         }
     }
     
@@ -101,6 +105,8 @@ public class RaceController : MonoBehaviour
     [SerializeField] GameObject introUI;
     [SerializeField] GameObject raceUI;
     [SerializeField] GameObject overUI;
+    [SerializeField] GameObject liftOffUI;
+    [SerializeField] GameObject liftOffTimerObject;
     [SerializeField] GameObject timerObject;
     [SerializeField] GameObject livesObject;
     [SerializeField] GameObject lapsObject;
@@ -113,11 +119,14 @@ public class RaceController : MonoBehaviour
     // Game State
     enum GameState {
         PreGame,
+        LiftOff,
         Playing,
         EndGame,
     }
     
     GameState state = GameState.PreGame;
+    // Nullable only to create a contract that these should only be used during certain game states
+    List<GameObject> aiCars;
     #nullable enable
     GameObject? userCar = null;
     #nullable disable
@@ -125,6 +134,7 @@ public class RaceController : MonoBehaviour
     // Race State
     // Stores time elapsed during race in seconds
     float time = 0f;
+    float liftOffTime = 0f;
     // Lives left = 5 - {number of collisions}
     ushort lives = 5;
     float crashTime = float.NegativeInfinity;
@@ -134,14 +144,25 @@ public class RaceController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        aiCars = new List<GameObject>();
+        OpenTitleScreen();
     }
 
     // Update is called once per frame
     void Update()
     {
-        score = scoringSystem.Score(laps, time);
-        if (state == GameState.Playing)
+        if (state == GameState.LiftOff) {
+            liftOffTime -= Time.deltaTime;
+            int itime = (int) liftOffTime + 1;
+            string ts = string.Format("{0:d}", itime);
+            liftOffTimerObject.GetComponent<TextMeshProUGUI>().text = ts;
+            if (liftOffTime <= 0f) {
+                BeginRace();
+            }
+        }
+        else if (state == GameState.Playing)
         {
+            score = scoringSystem.Score(laps, time);
             // Keep track of time elapsed while playing
             time += Time.deltaTime;
             // Format time
@@ -181,14 +202,12 @@ public class RaceController : MonoBehaviour
     }
     
     void DestroyCars() {
-        foreach (GameObject car in GameObject.FindGameObjectsWithTag("UserCar"))
+        foreach (GameObject car in aiCars)
         {
             Destroy(car);
         }
-        foreach (GameObject car in GameObject.FindGameObjectsWithTag("AICar"))
-        {
-            Destroy(car);
-        }
+        Destroy(userCar);
+        aiCars = new List<GameObject>();
         userCar = null;
     }
     
@@ -198,7 +217,6 @@ public class RaceController : MonoBehaviour
 
         // Instantiate Prefabs for user car and ai car
         // based on the car positions
-        userCar = (GameObject) Instantiate(userCarPrefab, gameSettings.carPositions[0], Quaternion.identity);
         for (int i = 1; i < gameSettings.carPositions.Length; i++)
         {
             GameObject car = (GameObject) Instantiate(aiCarPrefab, gameSettings.carPositions[i], Quaternion.identity);
@@ -207,11 +225,22 @@ public class RaceController : MonoBehaviour
             car.GetComponent<AICarController>().wps = waypoints;
             car.GetComponent<AICarController>().nextWP = 1;
             car.GetComponent<CarController>().speedAdjustment = speedAdjustments[i-1];
+            car.GetComponent<AICarController>().moveLock = true;
+            aiCars.Add(car);
         }
         // Add collision bridge for User Car
+        userCar = (GameObject) Instantiate(userCarPrefab, gameSettings.carPositions[0], Quaternion.identity);
         userCar.GetComponent<CarController>().oncol = OnUserCol;
         userCar.GetComponent<CarController>().onLapProgress = OnLapProgress;
         userCar.GetComponent<CarController>().gameSettings = gameSettings;
+        userCar.GetComponent<CarInputHandler>().moveLock = true;
+    }
+    
+    void unlockCars() {
+        foreach (GameObject car in aiCars) {
+            car.GetComponent<AICarController>().moveLock = false;
+        }
+        userCar.GetComponent<CarInputHandler>().moveLock = false;
     }
     
     public void BeginGame() {
@@ -220,12 +249,28 @@ public class RaceController : MonoBehaviour
         // Setup Scene
         InitCars();
         // Initialize Race State
+        liftOffTime = gameSettings.liftOffWait;
         lives = 5;
         time = 0f;
         laps = 0;
         score = 0;
         // Change UI
         introUI.SetActive(false);
+        liftOffUI.SetActive(true);
+        raceUI.SetActive(false);
+        overUI.SetActive(false);
+        // Change Game State
+        state = GameState.LiftOff;
+    }
+    
+    public void BeginRace() {
+        // Verify possible
+        if (state != GameState.LiftOff) return;
+        // Setup Scene (should have already placed main objects during liftoff)
+        unlockCars();
+        // Change UI
+        introUI.SetActive(false);
+        liftOffUI.SetActive(false);
         raceUI.SetActive(true);
         overUI.SetActive(false);
         // Change Game State
@@ -239,10 +284,23 @@ public class RaceController : MonoBehaviour
         DestroyCars();
         // Change UI
         introUI.SetActive(false);
+        liftOffUI.SetActive(false);
         raceUI.SetActive(false);
         overUI.SetActive(true);
         // Change Game State
         state = GameState.EndGame;
+    }
+    
+    public void OpenTitleScreen() {
+        // Set Scene
+        DestroyCars();
+        // Change UI
+        introUI.SetActive(true);
+        liftOffUI.SetActive(false);
+        raceUI.SetActive(false);
+        overUI.SetActive(false);
+        // Change Game State
+        state = GameState.PreGame;
     }
     
 }

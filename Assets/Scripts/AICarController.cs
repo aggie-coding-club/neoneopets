@@ -6,6 +6,7 @@ public class AICarController : MonoBehaviour
     public RaceController.GameSettings gs;
     public GameObject[] wps;
     public int nextWP = 0;
+    public bool moveLock = false;
 
     CarController carController;
     
@@ -23,7 +24,8 @@ public class AICarController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // TODO - Calculate what input to give and then send it to car controller.
+        if (moveLock) return;
+
         GameObject cwp = wps[nextWP];
         // Move next waypoint if we are within margin of error to current waypoint
         if (Vector3.Distance(cwp.transform.position, transform.position) < 1.5)
