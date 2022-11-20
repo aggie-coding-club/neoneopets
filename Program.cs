@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using NeoNeoPets.Data;
+using InternalAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
