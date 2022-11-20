@@ -45,7 +45,7 @@ app.MapWhen(
 );
 // Create APIHandler Object
 MongoConnector mongo = new MongoConnector();
-DBLink.UserStore userStore = new DBLink.UserStore(mongo);
+InternalApi.DBLink.UserStore userStore = new InternalApi.DBLink.UserStore(mongo);
 APIHandler apiHandler = new APIHandler(userStore);
 // Route api requests to APIHandler
 app.MapWhen(
