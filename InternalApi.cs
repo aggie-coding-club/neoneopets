@@ -9,7 +9,9 @@ using System;
 namespace InternalAPI;
 
 public class APIHandler {
-    public APIHandler() {
+    DBLink.UserStore userStore;
+    public APIHandler(DBLink.UserStore store) {
+        userStore = store;
     }
     // Called by application router to handle any /api/ request
     public Task HandleRequest(HttpContext ctx) {
@@ -50,7 +52,30 @@ public class APIHandler {
         if (!ctx.Request.Query.ContainsKey("username") || !ctx.Request.Query.ContainsKey("password")) {
             ctx.Response.StatusCode = 400;
             WriteBody(ctx.Response, "Missing username or password field");
+            return;
         }
+        string username = ctx.Request.Query["username"];
+        string password = ctx.Request.Query["password"];
+        var (ok, token) = userStore.Authorize(username, password);
+        if (!ok) {
+            ctx.Response.StatusCode = 500;
+            WriteBody(ctx.Response, "not ok");
+            return;
+        }
+        ctx.Response.Headers.Add("cdata-token", token);
+    }
+    void AccountCreate(HttpContext ctx, List<string> route) {
+        Console.WriteLine("Start account create");
+        if (route.Count > 0) {
+            ctx.Response.StatusCode = 404;
+            return;
+        }
+        if (!ctx.Request.Method.Equals("POST")) {
+            ctx.Response.StatusCode = 405;
+            WriteBody(ctx.Response, "Login only accepts POST requests");
+            return;
+        }
+
     }
 
     static void WriteBody(HttpResponse response, string content) {
