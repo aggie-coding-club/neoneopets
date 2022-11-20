@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - server_configuration
+      - api-dev
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
