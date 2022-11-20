@@ -42,10 +42,12 @@ app.MapWhen(
         }
     })
 );
+// Create APIHandler Object
+APIHandler apiHandler = new APIHandler();
 // Route api requests to APIHandler
 app.MapWhen(
     ctx => ctx.Request.Path.ToString().Contains("/api/"),
-    subApp => subApp.Run(APIHandler.HandleRequest)
+    subApp => subApp.Run(apiHandler.HandleRequest)
 );
 app.UseStaticFiles();
 
