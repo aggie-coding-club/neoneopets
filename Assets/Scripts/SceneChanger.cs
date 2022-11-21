@@ -30,7 +30,7 @@ public class SceneChanger : MonoBehaviour
 
     public void LoadWelcomeScreen()
     {
-        if (SceneManager.GetActiveScene() == SceneManager.GetSceneAt(0))
+        if (SceneManager.GetActiveScene() == SceneManager.GetSceneByName("LoginScreen"))
         {
             Instance.username = GameObject.FindWithTag("Username").GetComponent<TMP_InputField>().text;
             Instance.password = GameObject.FindWithTag("Password").GetComponent<TMP_InputField>().text;
@@ -46,5 +46,15 @@ public class SceneChanger : MonoBehaviour
     public void LoadCharacterCreation()
     {
         SceneManager.LoadSceneAsync("CharacterCreation");
+    }
+
+    public void LoadTetrisTitleScreen()
+    {
+        SceneManager.LoadSceneAsync("TetrisGame-TitleScreen");
+    }
+
+    public void LoadTetrisGame()
+    {
+        SceneManager.LoadSceneAsync("TetrisGame-Game");
     }
 }

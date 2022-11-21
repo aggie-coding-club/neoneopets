@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 4840321c463738144aeb11b56b327392
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - TBlock: {fileID: 6904306438871490365, guid: 625706a2e9bebcb4b9a3c5af1cf560d5, type: 3}
+  - ZBlock: {fileID: 8439707535291577779, guid: f38f51adde79f494aa97352443c1cc4a, type: 3}
+  - SBlock: {fileID: 8716928524753449295, guid: 833d0e85cb323d24fbee98cedcea6e94, type: 3}
+  - SquareBlock: {fileID: 2639110113057940989, guid: be1f98d2dc238364a97bf1de69678c6a, type: 3}
+  - LBlock: {fileID: 3883168510210873125, guid: 6f243f4b7040ca24b9196ebcf956d4d4, type: 3}
+  - JBlock: {fileID: 9034567768572032496, guid: a4188a78220418e48b461453b8ced22d, type: 3}
+  - IBlock: {fileID: 2946561456971762045, guid: 595298d0f2173bc44b8486d8e443b4a5, type: 3}
+  - controlledObject: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
