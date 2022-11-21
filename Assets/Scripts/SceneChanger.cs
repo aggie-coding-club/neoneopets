@@ -47,6 +47,11 @@ public class SceneChanger : MonoBehaviour
     {
         SceneManager.LoadSceneAsync("CharacterCreation");
     }
+    
+    public void LoadGamesSelect()
+    {
+        SceneManager.LoadSceneAsync("GameSelect");
+    }
 
     public void LoadTetrisTitleScreen()
     {

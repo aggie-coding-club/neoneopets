@@ -500,7 +500,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5689300285043119301, guid: ed21d9226708c05479ac638cd08e3421, type: 3}
         m_TargetAssemblyTypeName: SceneChanger, Assembly-CSharp
-        m_MethodName: LoadLogin
+        m_MethodName: LoadWelcomeScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

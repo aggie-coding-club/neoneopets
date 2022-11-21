@@ -12,6 +12,8 @@ TagManager:
   - RaceController
   - AICarWaypoint
   - TrackPoint
+  - Block
+  - not
   layers:
   - Default
   - TransparentFX
