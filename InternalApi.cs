@@ -56,8 +56,9 @@ public class APIHandler {
         }
         string username = ctx.Request.Query["username"];
         string password = ctx.Request.Query["password"];
+        string? token;
         try {
-            var token = userStore.Authorize(username, password);
+            token = userStore.Authorize(username, password);
         } catch (DBLink.LoadException err) {
             if (err.Issue == DBLink.LoadException.IssueType.InvalidUsername) {
                 ctx.Response.StatusCode = 400;
@@ -73,6 +74,9 @@ public class APIHandler {
                 ctx.Response.StatusCode = 500;
                 return;
             }
+            ctx.Response.StatusCode = 500;
+            WriteBody(ctx.Response, "This message is impossible");
+            return;
         } catch (DBLink.AuthorizeException err) {
             if (err.Issue == DBLink.AuthorizeException.IssueType.NoPasswordMatch) {
                 ctx.Response.StatusCode = 401;
@@ -88,6 +92,14 @@ public class APIHandler {
                 ctx.Response.StatusCode = 500;
                 return;
             }
+            ctx.Response.StatusCode = 500;
+            WriteBody(ctx.Response, "This message is impossible");
+            return;
+        }
+        if(token == null) {
+            ctx.Response.StatusCode = 500;
+            WriteBody(ctx.Response, "This message is impossible");
+            return;
         }
         ctx.Response.Headers.Add("cdata-token", token);
     }
@@ -102,7 +114,7 @@ public class APIHandler {
             WriteBody(ctx.Response, "Login only accepts PUT requests");
             return;
         }
-        string rbraw = ctx.Request.Body.ReadToEnd();
+        // string rbraw = ctx.Request.Body.ReadToEnd();
     }
 
     static void WriteBody(HttpResponse response, string content) {

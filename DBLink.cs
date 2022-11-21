@@ -121,14 +121,12 @@ public class CreateException : System.Exception {
         Issue = issue;
     }
     
-    public CreateException(IssueType issue, string message) {
+    public CreateException(IssueType issue, string message) : base(message) {
         Issue = issue;
-        this(message);
     }
     
-    public CreateException(string message, Exception origin) {
+    public CreateException(string message, Exception origin) : base(message, origin) {
         Issue = IssueType.UnknownOriginator;
-        this(message, origin);
     }
 }
 
@@ -143,17 +141,15 @@ public class LoadException : System.Exception {
     public LoadException(IssueType issue) {
         Issue = issue;
     }
-    public LoadException(IssueType issue, string message) {
-        this(message);
+    public LoadException(IssueType issue, string message) : base(message) {
         Issue = issue;
     }
-    public LoadException(string message, Exception origin) {
-        this(message, origin);
+    public LoadException(string message, Exception origin) : base(message, origin) {
         Issue = IssueType.UnknownOriginator;
     }
     
     public string ToString() {
-        return base.ToString() + "\nLoadException: " + message;
+        return base.ToString() + "\nLoadException: " + this.Message;
     }
 }
 
@@ -170,17 +166,15 @@ public class AuthorizeException : System.Exception {
         Issue = issue;
     }
 
-    public AuthorizeException(IssueType issue, string message) {
-        this(message);
+    public AuthorizeException(IssueType issue, string message) : base(message) {
         Issue = issue;
     }
     
-    public AuthorizeException(string message, Exception origin) {
-        this(message, origin);
+    public AuthorizeException(string message, Exception origin) : base(message, origin) {
         Issue = IssueType.UnknownOriginator;
     }
 
     public string ToString() {
-        return base.ToString() + "\nAuthorizeException: " + message;
+        return base.ToString() + "\nAuthorizeException: " + this.Message;
     }
 }
