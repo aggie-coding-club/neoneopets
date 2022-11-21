@@ -190,7 +190,7 @@ public class RaceController : MonoBehaviour
     {
         if (crashTime + gameSettings.crashCooldown > time)
             return;
-        if (lives == 0)
+        if (lives == 1)
             EndGame();
         --lives;
         crashTime = time;

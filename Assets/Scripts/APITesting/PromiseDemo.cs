@@ -21,7 +21,7 @@ public class PromiseDemo : MonoBehaviour
     }
     Promise<rT> AsPromise<rT>(IEnumerator coroutine) {
         Promise<rT> promise = new Promise<rT>();
-        this.StartCoroutine(RunCoroutine<rT>(promise, coroutine));
+        StartCoroutine(RunCoroutine<rT>(promise, coroutine));
         return promise;
     }
     static IEnumerator RunCoroutine<rT>(Promise<rT> promise, IEnumerator coroutine) {
