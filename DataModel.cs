@@ -51,7 +51,7 @@ public class UserFull : ISharable, IStorable {
             ["Highscores"] = highObj
         };
     }
-
+    
     public BsonDocument ToBson() {
         var highObj = new Dictionary<string, Dictionary<string, object>>();
         foreach (var (key, gameRun) in Highscores) {

@@ -56,11 +56,38 @@ public class APIHandler {
         }
         string username = ctx.Request.Query["username"];
         string password = ctx.Request.Query["password"];
-        var (ok, token) = userStore.Authorize(username, password);
-        if (!ok) {
-            ctx.Response.StatusCode = 500;
-            WriteBody(ctx.Response, "not ok");
-            return;
+        try {
+            var token = userStore.Authorize(username, password);
+        } catch (DBLink.LoadException err) {
+            if (err.Issue == DBLink.LoadException.IssueType.InvalidUsername) {
+                ctx.Response.StatusCode = 400;
+                WriteBody(ctx.Response, "Invalid username");
+                return;
+            }
+            if (err.Issue == DBLink.LoadException.IssueType.UsernameNotExist) {
+                ctx.Response.StatusCode = 400;
+                WriteBody(ctx.Response, "Username does not exist");
+                return;
+            }
+            if (err.Issue == DBLink.LoadException.IssueType.UnknownOriginator) {
+                ctx.Response.StatusCode = 500;
+                return;
+            }
+        } catch (DBLink.AuthorizeException err) {
+            if (err.Issue == DBLink.AuthorizeException.IssueType.NoPasswordMatch) {
+                ctx.Response.StatusCode = 401;
+                WriteBody(ctx.Response, "Password does not match");
+                return;
+            }
+            if (err.Issue == DBLink.AuthorizeException.IssueType.PasswordInvalid) {
+                ctx.Response.StatusCode = 401;
+                WriteBody(ctx.Response, "Invalid password");
+                return;
+            }
+            if (err.Issue == DBLink.AuthorizeException.IssueType.UnknownOriginator) {
+                ctx.Response.StatusCode = 500;
+                return;
+            }
         }
         ctx.Response.Headers.Add("cdata-token", token);
     }
@@ -70,12 +97,12 @@ public class APIHandler {
             ctx.Response.StatusCode = 404;
             return;
         }
-        if (!ctx.Request.Method.Equals("POST")) {
+        if (!ctx.Request.Method.Equals("PUT")) {
             ctx.Response.StatusCode = 405;
-            WriteBody(ctx.Response, "Login only accepts POST requests");
+            WriteBody(ctx.Response, "Login only accepts PUT requests");
             return;
         }
-
+        string rbraw = ctx.Request.Body.ReadToEnd();
     }
 
     static void WriteBody(HttpResponse response, string content) {

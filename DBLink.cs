@@ -18,8 +18,10 @@ public class UserStore {
         authMap = new Dictionary<string, string>();
     }
 
-    public (bool, UserFull?) Create(string username, string password) {
-        if (mongo.UserExists(username)) return (false, null);
+    public UserFull Create(string username, string password) {
+        if (mongo.UserExists(username)) {
+            throw new CreateException(CreateException.IssueType.UsernameExists);
+        }
         string token = Guid.NewGuid().ToString();
         UserFull doc = new UserFull(
             username, 
@@ -30,26 +32,34 @@ public class UserStore {
         );
         documents.Add(username, doc);
         authMap.Add(token, username);
-        return (true, doc);
+        return doc;
     }
 
-    public (bool, UserFull?) Load(string username) {
-        if (!mongo.UserExists(username)) return (false, null);
+    public UserFull Load(string username) {
+        if (!mongo.UserExists(username)) {
+            throw new LoadException(LoadException.IssueType.UsernameNotExist);
+        }
         BsonDocument user = mongo.GetUser(username);
         UserFull udoc = UserFull.FromBson(user);
         documents.Add(username, udoc);
-        return (true, udoc);
+        return udoc;
     }
 
-    public (bool, string?) Authorize(string username, string password) {
-        if (!documents.ContainsKey(username)) Load(username);
-        UserFull udoc = documents[username];
-        if (!VerifyPassword(password, udoc.Password)) return (false, null);
+    public string Authorize(string username, string password) {
+        UserFull udoc;
+        if (!documents.ContainsKey(username)) {
+            udoc = Load(username);
+        } else {
+            udoc = documents[username];
+        }
+        if (!VerifyPassword(password, udoc.Password)) {
+            throw new AuthorizeException(AuthorizeException.IssueType.NoPasswordMatch);
+        }
         string token = Guid.NewGuid().ToString();
         udoc.Session = new AuthSession {
             Token = token
         };
-        return (true, token);
+        return token;
     }
 
     public (bool, UserFull?) GetUserDoc(string token) {
@@ -96,5 +106,81 @@ public class UserStore {
                 return false;
         return true;
     }
+}
 
+public class CreateException : System.Exception {
+    public enum IssueType {
+        UsernameExists,
+        InvalidUsername,
+        InvalidPassword,
+        UnknownOriginator
+    }
+    public IssueType Issue { get; }
+    
+    public CreateException(IssueType issue) {
+        Issue = issue;
+    }
+    
+    public CreateException(IssueType issue, string message) {
+        Issue = issue;
+        this(message);
+    }
+    
+    public CreateException(string message, Exception origin) {
+        Issue = IssueType.UnknownOriginator;
+        this(message, origin);
+    }
+}
+
+public class LoadException : System.Exception {
+    public enum IssueType {
+        UsernameNotExist,
+        InvalidUsername,
+        UnknownOriginator,
+    }
+    public IssueType Issue { get; }
+    
+    public LoadException(IssueType issue) {
+        Issue = issue;
+    }
+    public LoadException(IssueType issue, string message) {
+        this(message);
+        Issue = issue;
+    }
+    public LoadException(string message, Exception origin) {
+        this(message, origin);
+        Issue = IssueType.UnknownOriginator;
+    }
+    
+    public string ToString() {
+        return base.ToString() + "\nLoadException: " + message;
+    }
+}
+
+public class AuthorizeException : System.Exception {
+    public enum IssueType {
+        PasswordInvalid,
+        NoPasswordMatch,
+        UnknownOriginator
+    }
+    
+    public IssueType Issue { get; }
+    
+    public AuthorizeException(IssueType issue) {
+        Issue = issue;
+    }
+
+    public AuthorizeException(IssueType issue, string message) {
+        this(message);
+        Issue = issue;
+    }
+    
+    public AuthorizeException(string message, Exception origin) {
+        this(message, origin);
+        Issue = IssueType.UnknownOriginator;
+    }
+
+    public string ToString() {
+        return base.ToString() + "\nAuthorizeException: " + message;
+    }
 }
