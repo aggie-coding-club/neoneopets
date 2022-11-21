@@ -62,4 +62,9 @@ public class SceneChanger : MonoBehaviour
     {
         SceneManager.LoadSceneAsync("TetrisGame-Game");
     }
+    
+    public void LoadRacingGame()
+    {
+        SceneManager.LoadSceneAsync("RacingGame");
+    }
 }

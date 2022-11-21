@@ -17,4 +17,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TetrisGame-Game.unity
     guid: 55946e642670aef479d4f97da63a74a0
+  - enabled: 1
+    path: Assets/Scenes/CharacterCreationScreen.unity
+    guid: 675fa20d83cb3cf4db7a09f42e98fad4
+  - enabled: 1
+    path: Assets/Scenes/GameSelect.unity
+    guid: 710dc51963712f047acdd1620a4dde81
+  - enabled: 1
+    path: Assets/Scenes/RacingGame.unity
+    guid: 66e9b0acff041ae439807ff6859cf4dd
   m_configObjects: {}
